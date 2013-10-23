@@ -114,7 +114,8 @@ module.exports = function (grunt) {
                     ]
                 }]
             },
-            server: '.tmp'
+            server: '.tmp',
+            prodVer:'<%= yeoman.app%>/index-dist.html'
         },
         jshint: {
             options: {
@@ -204,6 +205,19 @@ module.exports = function (grunt) {
                         '<%%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
                         '<%%= yeoman.dist %>/styles/fonts/*'
                     ]
+                }
+            }
+        },
+        "string-replace":{
+            prodReady:{
+                files:{
+                    '<%= yeoman.app %>/index-dist.html':'<%= yeoman.app %>/index.html'
+                },
+                options:{
+                    replacements:[{
+                        pattern:'bower_components/ember/ember.js',
+                        replacement:'bower_components/ember/ember.prod.js'
+                    }]
                 }
             }
         },
@@ -378,7 +392,9 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
+        'string-replace:prodReady',
         'useminPrepare',
+        'clean:prodVer',
         'concurrent:dist',
         'neuter:app',
         'concat',
